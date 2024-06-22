@@ -302,3 +302,40 @@ snmpwalk -c public -v1 192.168.50.151 1.3.6.1.2.1.25.6.3.1.2
 # Enumerates open TCP ports 
 snmpwalk -c public -v1 192.168.50.151 1.3.6.1.2.1.6.13.1.3
 ```
+
+Nmap scan 
+check if host is up
+```bash
+nmap -sn <target_ip>
+```
+
+ping scan checks port 80, 443 (avoid firewall rules as http and https most likely to be open)
+windows will drop ping packets to port 80,443 if firewall is up
+
+`-Pn` assumes host is up, skip host discovery
+```bash
+# scan SMB port
+nmap -Pn -p445 <target_ip>
+```
+
+sudo allows for ICMP packetes
+```bash
+sudo nmap -sn <target_ip>
+```
+
+`-sS` stealth scan: no ACK packet is sent (note: sudo required)
+```bash
+sudo nmap -sS <target_ip>
+```
+
+Nmap with sudo privileges does not complete 3 way TCP handshake, need to specify `-sT`
+```bash
+sudo nmap -sT <target_ip>
+```
+
+example nmap scan for host vulnerable to eternalblue exploit:
+```bash
+# -sS stealth scan, -Pn skip host discovery, -oG greppable output, -v verbose, -n skip dns resolution, --open only show open ports
+sudo nmap -sS -p445 <target_ip> --script smb-vuln-ms17-010.nse -Pn -oG eternalblue.txt -v -n --open
+```
+
